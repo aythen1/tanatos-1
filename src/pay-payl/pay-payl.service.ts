@@ -83,8 +83,8 @@ export class PayPalService {
           brand_name: storeName,
           landing_page: 'NO_PREFERENCE',
           user_action: 'PAY_NOW',
-          return_url: `http://44792771-e1fc-43d6-bade-2a329516381c.pub.instances.scw.cloud:3000/pay-pal-order/capture-orders`,
-          cancel_url: `http://44792771-e1fc-43d6-bade-2a329516381c.pub.instances.scw.cloud:3000/pay-pal-order/cancel-orders`,
+          return_url: `http://44792771-e1fc-43d6-bade-2a329516381c.pub.instances.scw.cloud:3000/pay-pal-order/capture-orders/${orderId}`,
+          cancel_url: `http://44792771-e1fc-43d6-bade-2a329516381c.pub.instances.scw.cloud:3000/pay-pal-order/cancel-orders/${orderId}`,
         },
       };
 
