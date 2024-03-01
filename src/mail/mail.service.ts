@@ -114,10 +114,36 @@ export class EmailService {
         to: email,
         subject: 'Tanatos: pago finalizado, flores en camino.',
         html: `
-          <h1>Hola${nombre}</h1\>
+          <h1>Hola ${nombre}</h1\>
 <p\>Tu pedido en Tanatos con numero ${idPedido} ha sido pagado correctamente.</p>
           <p>El monto total de la factura fue de $${monto}.</p>
           <p>Gracias por hacernos parte, siempre estaremos para acompañarte.</p>
+          <br></br>
+          <br></br>
+          <p>Atentamente,</p>
+          <p>el equipo de Tanatos.</p>
+
+        `,
+      };
+
+      await this.transporter.sendMail(message);
+    } catch (error) {
+      console.error('Error al enviar el correo electrónico:', error);
+    }
+  }
+
+  async sendOrderCancelEmail(email: string, idPedido: number, nombre: string) {
+    try {
+      const message = {
+        from: 'azschiaffino@gmail.com',
+        to: email,
+        subject: 'Tanatos: se detuvo la entrega, pago cancelado.',
+        html: `
+          <h1>Hola ${nombre}</h1\>
+<p\>Tu pedido en Tanatos con numero ${idPedido} ha sido cancelado.</p>
+          <p>Este mensaje es para dejarte al tanto de la situacion del pedido.</p>
+          <p>Si aun deceas hacerle llegar las flores a tu persona querida, siempre podras volver a su esquela y solicitar otro pedido.</p>
+          <p>Gracias por tu confianza.</p>
           <br></br>
           <br></br>
           <p>Atentamente,</p>

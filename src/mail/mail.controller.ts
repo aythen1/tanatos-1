@@ -44,6 +44,23 @@ export class EmailController {
     );
   }
 
+  @Post('/order-canceled')
+  async sendOrderCanceledEmail(
+    @Body()
+    body: {
+      email: string;
+      nombre: string;
+      idPedido: number;
+      monto: number;
+    },
+  ) {
+    await this.emailService.sendOrderCancelEmail(
+      body.email,
+      body.idPedido,
+      body.nombre,
+    );
+  }
+
   @Post('/order-paid')
   async sendOrderPaidEmail(
     @Body()
