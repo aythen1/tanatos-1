@@ -33,11 +33,11 @@ export class PayPalService {
           'esquela.user',
         ],
       });
-      console.log(ord, 'esto es ord');
+      console.log('esto es ord', ord);
 
-      const floristeriaAmount = totalAmount * 0.7;
-      const tanatorioAmount = totalAmount * 0.15;
-      const appTanatosAmount = totalAmount * 0.15;
+      // const floristeriaAmount = totalAmount * 0.7;
+      // const tanatorioAmount = totalAmount * 0.15;
+      // const appTanatosAmount = totalAmount * 0.15;
 
       const order = {
         intent: 'CAPTURE',
@@ -45,34 +45,34 @@ export class PayPalService {
           {
             amount: {
               currency_code: 'USD',
-              value: totalAmount.toFixed(2),
+              value: '100.00',
               breakdown: {
                 item_total: {
                   currency_code: 'USD',
-                  value: totalAmount.toFixed(2),
+                  value: '100.00',
                 },
               },
             },
             payees: [
               {
-                email_address: 'sb-nkvso29618640@personal.example.com',
+                email_address: 'sb-y1pzw29104571_api1.business.example.com',
                 amount: {
                   currency_code: 'USD',
-                  value: floristeriaAmount.toFixed(2),
-                },
-              },
-              {
-                email_address: 'sb-flm0g29608509@business.example.com',
-                amount: {
-                  currency_code: 'USD',
-                  value: tanatorioAmount.toFixed(2),
+                  value: '30.00',
                 },
               },
               {
                 email_address: 'sb-xwimt29130867@business.example.com',
                 amount: {
                   currency_code: 'USD',
-                  value: appTanatosAmount.toFixed(2),
+                  value: '30.00',
+                },
+              },
+              {
+                email_address: 'sb-qy3h329104565_api1.business.example.com',
+                amount: {
+                  currency_code: 'USD',
+                  value: '40.00',
                 },
               },
             ],
@@ -83,8 +83,8 @@ export class PayPalService {
           brand_name: storeName,
           landing_page: 'NO_PREFERENCE',
           user_action: 'PAY_NOW',
-          return_url: `http://44792771-e1fc-43d6-bade-2a329516381c.pub.instances.scw.cloud:3000/pay-pal-order/capture-orders/${orderId}`,
-          cancel_url: `http://44792771-e1fc-43d6-bade-2a329516381c.pub.instances.scw.cloud:3000/pay-pal-order/cancel-orders/${orderId}`,
+          return_url: `http://localhost:3000/pay-pal-order/capture-orders`,
+          cancel_url: `http://localhost:3000/pay-pal-order/cancel-orders`,
         },
       };
 
@@ -101,6 +101,7 @@ export class PayPalService {
       });
       console.log('esto es paypal id', access_token);
 
+      // Crear la orden de pago
       const response = await axios.post(
         `${PAYPAL_API}/v2/checkout/orders`,
         order,
@@ -112,15 +113,54 @@ export class PayPalService {
         },
       );
 
+      // Verificar el estado de los pagos individuales
+      const orderID = response.data.id;
+      const payees = order.purchase_units[0].payees;
+      console.log(
+        'Datos de la respuesta de la creación de la orden:',
+        response.data,
+      );
+      console.log('Destinatarios del pago:', order.purchase_units[0].payees);
+
+      for (const payee of payees) {
+        try {
+          const captureResponse = await axios.post(
+            `${PAYPAL_API}/v2/checkout/orders/${orderID}/capture`,
+            {},
+            {
+              auth: {
+                username: PAYPAL_API_CLIENT,
+                password: PAYPAL_API_SECRET,
+              },
+            },
+          );
+
+          console.log('captureResponse', captureResponse);
+
+          console.log(`Pago exitoso para ${payee.email_address}`);
+          // Aquí puedes realizar acciones adicionales según el resultado
+        } catch (captureError) {
+          console.error(
+            `Error al capturar el pago para ${payee.email_address + orderID}:`,
+            captureError,
+          );
+          // Puedes manejar el error según tus necesidades
+        }
+      }
+      console.log(
+        'ESTO ES MUY IMPORTANTE PORQUE ES RESPONSE.DATA',
+        response.data,
+      );
       return response.data;
     } catch (error) {
-      console.log(error);
+      console.error('Error al iniciar el proceso de pago:', error.message);
       throw new NotFoundException('Error al iniciar el proceso de pago');
     }
   }
 
   async captureOrder(token: string): Promise<string> {
     try {
+      console.log('es aca donde se traba');
       const response = await axios.post(
         `${PAYPAL_API}/v2/checkout/orders/${token}/capture`,
         {},

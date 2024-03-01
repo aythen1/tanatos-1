@@ -15,6 +15,8 @@ import { PayPayl } from './pay-payl/entities/pay-payl.entity';
 import { Usuario } from './users/entities/user.entity';
 import { FavoritosModule } from './favoritos/favoritos.module';
 import { Favorito } from './favoritos/entities/favorito.entity';
+import { StripeModule } from './stripe/stripe.module';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -37,6 +39,8 @@ import { Favorito } from './favoritos/entities/favorito.entity';
     PayPalModule,
     FavoritosModule,
     FavoritosModule,
+    StripeModule,
+    MailModule,
   ],
   controllers: [],
   providers: [],

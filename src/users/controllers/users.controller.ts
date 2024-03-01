@@ -23,10 +23,14 @@ import upload from '../../upload';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { unlink } from 'fs';
+import { EmailService } from 'src/mail/mail.service';
 
 @Controller('usuarios')
 export class UsuarioController {
-  constructor(private readonly usuarioService: UsuarioService) {}
+  constructor(
+    private readonly usuarioService: UsuarioService,
+    private readonly emailService: EmailService,
+  ) {}
 
   @Get(':id/products')
   async getUserStoreProducts(@Param('id') id: string) {
@@ -241,5 +245,36 @@ export class UsuarioController {
       throw new NotFoundException(`User with ID ${id} does not have a store.`);
     }
     return store;
+  }
+
+  @Post('pass-change/:id')
+  async changePass(@Param('id') id: string) {
+    try {
+      console.log(`cambiando clave random a usuario ${id}...`);
+      const usuario = await this.usuarioService.passChange(+id);
+
+      if (!usuario) {
+        throw new NotFoundException(`User with ID ${id} does not exist.`);
+      }
+
+      // Extrae el correo electrónico del usuario y la contraseña generada
+      const email = usuario.email; // Asumiendo que hay un campo 'email' en el modelo Usuario
+      const username = usuario.username; // Asumiendo que hay un campo 'nombre' en el modelo Usuario
+      const password = usuario.password;
+
+      // Llama a la ruta sendPasswordChangeEmail con los datos obtenidos
+      await this.emailService.sendPasswordChangeEmail(
+        email,
+        username,
+        password,
+      );
+
+      return usuario;
+    } catch (error) {
+      console.error(
+        `Error cambiando la contraseña del usuario ${id}: ${error.message}`,
+      );
+      throw error;
+    }
   }
 }

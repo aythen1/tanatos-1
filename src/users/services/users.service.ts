@@ -142,4 +142,32 @@ export class UsuarioService {
       throw error;
     }
   }
+
+  async passChange(id: number): Promise<Usuario> {
+    console.log(`buscando usuario con id ${id}...`);
+    try {
+      // Busca el usuario por su ID
+      const usuario = await this.usuarioRepository.findOne({ where: { id } });
+
+      // Verifica si el usuario existe
+      if (!usuario) {
+        throw new NotFoundException(`Usuario con ID ${id} no encontrado`);
+      }
+
+      // Genera un número aleatorio de 4 dígitos
+      const randomPassword = Math.floor(1000 + Math.random() * 9000).toString();
+
+      // Actualiza la contraseña del usuario con el número aleatorio generado
+      usuario.password = randomPassword;
+
+      // Guarda los cambios en la base de datos
+      await this.usuarioRepository.save(usuario);
+
+      // Retorna el usuario con la contraseña actualizada
+      return usuario;
+    } catch (error) {
+      console.error(`Error al hacer clave random: ${error.message}`);
+      throw error;
+    }
+  }
 }
