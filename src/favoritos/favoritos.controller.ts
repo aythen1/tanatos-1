@@ -27,10 +27,13 @@ export class FavoritosController {
     return this.favoritosService.obtenerFavoritos(userId);
   }
 
-  @Delete(':id')
-  async eliminarFavorito(@Param('id') favoritoId: number): Promise<void> {
+  @Delete(':funeralId')
+  async eliminarFavorito(
+    @Param('userId') userId: number,
+    @Param('funeralId') funeralId: number,
+  ): Promise<void> {
     try {
-      await this.favoritosService.eliminarFavorito(favoritoId);
+      await this.favoritosService.eliminarFavorito(userId, funeralId);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new NotFoundException(error.message);

@@ -69,10 +69,10 @@ export class FavoritosService {
     return favoritos;
   }
 
-  async eliminarFavorito(favoritoId: number): Promise<void> {
-    // Buscar el favorito por su ID
+  async eliminarFavorito(userId: number, funeralId: number): Promise<void> {
+    // Buscar el favorito por el ID del usuario y el ID del funeral
     const favorito = await this.favoritoRepository.findOne({
-      where: { id: favoritoId },
+      where: { usuario: { id: userId }, funeral: { id: funeralId } },
     });
 
     // Verificar si el favorito existe
@@ -82,5 +82,6 @@ export class FavoritosService {
 
     // Eliminar el favorito de la base de datos
     await this.favoritoRepository.remove(favorito);
+    return;
   }
 }
