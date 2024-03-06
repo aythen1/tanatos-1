@@ -78,4 +78,31 @@ export class EmailController {
       body.monto,
     );
   }
+
+  @Post('/pass-change')
+  async sendPasswordResetLink(@Body('email') email: string) {
+    try {
+      // Aquí debes construir el enlace para el restablecimiento de contraseña.
+      const resetLink = `http://localhost:3000/usuarios/pass-change/${email}`;
+
+      // Envía el correo electrónico con el enlace de restablecimiento.
+      await this.emailService.sendPasswordResetEmail(email, resetLink);
+
+      // Retorna una respuesta exitosa.
+      return {
+        message:
+          'Se ha enviado el enlace de restablecimiento de contraseña al correo electrónico proporcionado.',
+      };
+    } catch (error) {
+      // Maneja cualquier error y retorna una respuesta de error.
+      console.error(
+        'Error al enviar el correo electrónico de restablecimiento de contraseña:',
+        error,
+      );
+      return {
+        error:
+          'Ha ocurrido un error al enviar el correo electrónico de restablecimiento de contraseña.',
+      };
+    }
+  }
 }

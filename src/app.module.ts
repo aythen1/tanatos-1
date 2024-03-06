@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { JwtModule } from '@nestjs/jwt';
 import { FuneralModule } from './funeral/funeral.module';
 import { OrderModule } from './order/order.module';
 import { UserTypeModule } from './users/users.module';
@@ -41,6 +42,14 @@ import { MailModule } from './mail/mail.module';
     FavoritosModule,
     StripeModule,
     MailModule,
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET_KEY'),
+        signOptions: { expiresIn: '24h' }, // Cambia según tus necesidades
+      }),
+      inject: [ConfigService],
+    }),
   ],
   controllers: [],
   providers: [],

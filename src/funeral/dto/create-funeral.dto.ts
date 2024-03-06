@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsDateString, IsNumber } from 'class-validator';
+import { IsNotEmpty, IsString, IsDateString, IsNumber, IsOptional } from 'class-validator';
 
 export class CreateFuneralDto {
   @IsNotEmpty()
@@ -57,7 +57,7 @@ export class CreateFuneralDto {
   @IsString()
   funeral_image: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   ceremonia_image: string;
 }

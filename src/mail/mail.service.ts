@@ -26,11 +26,9 @@ export class EmailService {
         subject: 'Tanatos: ¡Se ha cambiado tu contraseña!',
         html: `
           <h1>Hola ${nombre},</h1>
-          <p>Se ha cambiado la contraseña de tu cuenta.</p>
+          <p>Al parecer no recuerdas tu clave de Tanatos!.</p>
           <p>Contraseña:  ${pass}.</p>
-          <p>Si no has realizado este cambio, por favor contacta con nosotros inmediatamente al siguiente correo:</p>
-          <br></br>
-          <p>tanatosSupport@gmail.com</p>
+          <p>Esta de aquí arriba es tu clave, puedes acceder a tu cuenta con ella.</p>
           <br></br>
           <br></br>
           <p>Atentamente,</p>
@@ -179,6 +177,28 @@ export class EmailService {
       await this.transporter.sendMail(message);
     } catch (error) {
       console.error('Error al enviar el correo electrónico:', error);
+    }
+  }
+
+  async sendPasswordResetEmail(email: string, resetLink: string) {
+    try {
+      const message = {
+        from: 'azschiaffino@gmail.com',
+        to: email,
+        subject: 'Restablecimiento de contraseña',
+        html: `
+          <h1>Olvidó su contraseña?</h1>
+          <p>Parece que has olvidado tu contraseña de Tanatos. No te preocupes, estamos aquí para ayudarte.</p>
+          <p>Haz clic en el siguiente enlace para restablecer tu contraseña:</p>
+          <a href="${resetLink}">${resetLink}</a>
+          <p>Si no has solicitado restablecer tu contraseña, puedes ignorar este correo electrónico de forma segura.</p>
+        `,
+      };
+
+      await this.transporter.sendMail(message);
+    } catch (error) {
+      console.error('Error al enviar el correo electrónico:', error);
+      throw error;
     }
   }
 }

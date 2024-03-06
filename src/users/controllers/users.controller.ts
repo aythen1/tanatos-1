@@ -13,6 +13,7 @@ import {
   NotFoundException,
   UnauthorizedException,
   ParseIntPipe,
+  Query,
 } from '@nestjs/common';
 import { UsuarioService } from '../../users/services/users.service';
 import { CreateUsuarioDto } from '../dto/create-user.dto';
@@ -247,34 +248,88 @@ export class UsuarioController {
     return store;
   }
 
-  @Post('pass-change/:id')
-  async changePass(@Param('id') id: string) {
+  @Get('pass-change/:email')
+  async showPasswordChangeForm(@Param('email') email: string) {
     try {
-      console.log(`cambiando clave random a usuario ${id}...`);
-      const usuario = await this.usuarioService.passChange(+id);
+      // Busca el usuario por su correo electrónico
+      const usuario = await this.usuarioService.findOneByEmail(email);
 
+      // Verifica si el usuario existe
       if (!usuario) {
-        throw new NotFoundException(`User with ID ${id} does not exist.`);
+        // Si no se encuentra el usuario, retorna un mensaje de error
+        return { error: 'Usuario no encontrado' };
       }
 
-      // Extrae el correo electrónico del usuario y la contraseña generada
-      const email = usuario.email; // Asumiendo que hay un campo 'email' en el modelo Usuario
-      const username = usuario.username; // Asumiendo que hay un campo 'nombre' en el modelo Usuario
-      const password = usuario.password;
+      // Construye el HTML del formulario para cambiar la contraseña
+      const passwordChangeForm = `
+      <html>
+      <head>
+        <title>Cambia tu clave aquí</title>
+        <style>
+          body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+          }
+          form {
+            width: 300px;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+          }
+          input {
+            width: calc(100% - 20px);
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            box-sizing: border-box;
+          }
+          button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: #ffffff;
+            font-size: 16px;
+            cursor: pointer;
+          }
+          button:hover {
+            background-color: #0056b3;
+          }
+        </style>
+      </head>
+      <body>
+        <form method="POST" action="/usuarios/update-password">
+          <input type="hidden" name="email" value="${email}">
+          <h1>Cambia tu contraseña</h1>
+          <label for="password">Nueva contraseña:</label>
+          <input type="password" id="password" name="password" required pattern="[0-9]{4}" title="Recuerde que debe ser numérica y de 4 dígitos">
+          <button type="submit">Guardar cambios</button>
+        </form>
+      </body>
+      </html>
+    `;
 
-      // Llama a la ruta sendPasswordChangeEmail con los datos obtenidos
-      await this.emailService.sendPasswordChangeEmail(
-        email,
-        username,
-        password,
-      );
-
-      return usuario;
+      // Retorna el HTML del formulario
+      return passwordChangeForm;
     } catch (error) {
-      console.error(
-        `Error cambiando la contraseña del usuario ${id}: ${error.message}`,
-      );
-      throw error;
+      // Maneja cualquier error y retorna un mensaje de error
+      console.error('Error al buscar usuario por email:', error.message);
+      return { error: 'Ha ocurrido un error al buscar el usuario por email' };
     }
+  }
+
+  @Post('update-password')
+  async updatePasswordChange(
+    @Body() body: { email: string; password: string },
+  ) {
+    return await this.usuarioService.updatePasswordChange(body);
   }
 }

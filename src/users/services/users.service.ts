@@ -143,31 +143,66 @@ export class UsuarioService {
     }
   }
 
-  async passChange(id: number): Promise<Usuario> {
-    console.log(`buscando usuario con id ${id}...`);
+  async updatePasswordChange(body: { email: string; password: string }) {
     try {
-      // Busca el usuario por su ID
-      const usuario = await this.usuarioRepository.findOne({ where: { id } });
+      const { email, password } = body;
+
+      // Verifica si la contraseña tiene 4 dígitos
+      if (password.length !== 4 || !/^\d+$/.test(password)) {
+        return { error: 'La contraseña debe ser un número de 4 dígitos' };
+      }
+
+      // Busca el usuario por correo electrónico
+      const usuario = await this.usuarioRepository.findOne({
+        where: { email },
+      });
 
       // Verifica si el usuario existe
       if (!usuario) {
-        throw new NotFoundException(`Usuario con ID ${id} no encontrado`);
+        return { error: 'Usuario no encontrado' };
       }
 
-      // Genera un número aleatorio de 4 dígitos
-      const randomPassword = Math.floor(1000 + Math.random() * 9000).toString();
+      // Hashea la contraseña
+      const hashedPassword = await bcrypt.hash(password, 10);
 
-      // Actualiza la contraseña del usuario con el número aleatorio generado
-      usuario.password = randomPassword;
+      // Actualiza la contraseña del usuario en la base de datos
+      usuario.password = hashedPassword;
+      await this.usuarioRepository.update(usuario.id, {
+        password: hashedPassword,
+      });
 
-      // Guarda los cambios en la base de datos
-      await this.usuarioRepository.save(usuario);
+      const successMessage = `
+      <html>
+      <head>
+        <title>Contraseña actualizada</title>
+        <style>
+          body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+          }
+          .message-container {
+            text-align: center;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="message-container">
+          <h1>Contraseña actualizada correctamente</h1>
+        </div>
+      </body>
+      </html>
+    `;
 
-      // Retorna el usuario con la contraseña actualizada
-      return usuario;
+      // Retorna el HTML de éxito
+      return successMessage;
     } catch (error) {
-      console.error(`Error al hacer clave random: ${error.message}`);
-      throw error;
+      // Maneja cualquier error y retorna un mensaje de error
+      console.error('Error al actualizar la contraseña:', error.message);
+      return { error: 'Ha ocurrido un error al actualizar la contraseña' };
     }
   }
 }
