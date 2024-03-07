@@ -332,4 +332,65 @@ export class UsuarioController {
   ) {
     return await this.usuarioService.updatePasswordChange(body);
   }
+
+  @Patch(':id/add-recent-search')
+  async addRecentSearch(
+    @Param('id', ParseIntPipe) id: number,
+    @Body('searchQuery') searchQuery: string,
+  ) {
+    console.log(`Añadiendo búsqueda reciente para el usuario con ID ${id}...`);
+    try {
+      // Llama al método del servicio para agregar la búsqueda reciente
+      const usuario = await this.usuarioService.addRecentSearch(
+        id,
+        searchQuery,
+      );
+      return { message: 'Búsqueda reciente agregada correctamente', usuario };
+    } catch (error) {
+      console.error('Error al agregar búsqueda reciente:', error.message);
+      throw new BadRequestException('Error al agregar búsqueda reciente');
+    }
+  }
+
+  @Get(':id/recent-searches')
+  async getUserRecentSearches(@Param('id') id: string) {
+    console.log(`Buscando las búsquedas recientes del usuario con ID ${id}...`);
+    const userRecentSearches =
+      await this.usuarioService.getUserRecentSearches(+id);
+    if (!userRecentSearches) {
+      throw new NotFoundException(
+        `Búsquedas recientes del usuario con ID ${id} no encontradas`,
+      );
+    }
+    return userRecentSearches;
+  }
+
+  // rutas de CRM
+
+  @Post(':id/add-store')
+  async addStoreToTanatorio(
+    @Param('id') id: number,
+    @Body() body: { storeId: string },
+  ) {
+    const { storeId } = body;
+    return this.usuarioService.addStoreToTanatorio(id, storeId);
+  }
+
+  @Delete(':id/remove-store')
+  async removeStoreFromTanatorio(
+    @Param('id') id: number,
+    @Body() body: { storeId: string },
+  ) {
+    const { storeId } = body;
+    return this.usuarioService.removeStoreFromTanatorio(id, storeId);
+  }
+
+  @Delete(':id/tanatorio-stores')
+  async removeAllTanatorioStores(@Param('id') id: string) {
+    console.log(
+      `Eliminando todas las tiendas asociadas al tanatorio con ID ${id}...`,
+    );
+    const result = await this.usuarioService.removeAllTanatorioStores(+id);
+    return result;
+  }
 }

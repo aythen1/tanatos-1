@@ -83,7 +83,7 @@ export class EmailController {
   async sendPasswordResetLink(@Body('email') email: string) {
     try {
       // Aquí debes construir el enlace para el restablecimiento de contraseña.
-      const resetLink = `http://44792771-e1fc-43d6-bade-2a329516381c.pub.instances.scw.cloud:3000/usuarios/pass-change/${email}`;
+      const resetLink = `http://localhost:3000/usuarios/pass-change/${email}`;
 
       // Envía el correo electrónico con el enlace de restablecimiento.
       await this.emailService.sendPasswordResetEmail(email, resetLink);

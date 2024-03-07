@@ -5,7 +5,7 @@ import { IsString, MaxLength, IsOptional, IsArray } from 'class-validator';
 export class UpdateUsuarioDto extends PartialType(CreateUsuarioDto) {
   @IsOptional()
   @IsString({ message: 'Username should be a string' })
-  @MaxLength(30, { message: 'Username should be at most 30 characters long' })
+  @MaxLength(50, { message: 'Username should be at most 50 characters long' })
   username?: string;
 
   @IsOptional()
@@ -45,21 +45,14 @@ export class UpdateUsuarioDto extends PartialType(CreateUsuarioDto) {
   @MaxLength(20, { message: 'Phone should be at most 20 characters long' })
   phone?: string;
 
-  // @IsOptional()
-  // dob?: string;
-
-  // @IsOptional()
-  // @IsString({ message: 'User type should be a string' })
-  // user_type?: string;
-
   @IsOptional()
   old_password?: string;
 
-  // @IsOptional()
-  // verificationCode?: string;
+  @IsOptional()
+  recentSearch: string[] | null;
 
-  // @IsOptional()
-  // verificationCodeExpiration?: Date;
+  @IsOptional()
+  storeStockTanatorio: string[] | null;
 
   @IsOptional()
   @IsArray({ message: 'Favoritos should be an array of numbers' })

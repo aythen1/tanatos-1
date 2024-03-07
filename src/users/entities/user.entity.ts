@@ -58,6 +58,12 @@ export class Usuario {
   @Column({ nullable: true })
   old_password: string;
 
+  @Column({ type: 'simple-array', nullable: true })
+  recentSearch: string[] | null;
+
+  @Column({ type: 'simple-array', nullable: true })
+  storeStockTanatorio: string[] | null;
+
   @OneToMany(() => StoreFlorist, (store) => store.usuario, { nullable: true })
   @JoinColumn({ name: 'store_id' }) // Especificamos la columna que representa la relación
   store: StoreFlorist[];

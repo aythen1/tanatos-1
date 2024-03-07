@@ -205,4 +205,116 @@ export class UsuarioService {
       return { error: 'Ha ocurrido un error al actualizar la contraseña' };
     }
   }
+
+  async addRecentSearch(id: number, searchQuery: string): Promise<Usuario> {
+    console.log(`Añadiendo búsqueda reciente para el usuario con ID ${id}...`);
+    try {
+      // Busca el usuario por su ID
+      const usuario = await this.usuarioRepository.findOne({
+        where: { id: id },
+      });
+
+      // Verifica si el usuario existe
+      if (!usuario) {
+        throw new NotFoundException(`Usuario con ID ${id} no encontrado`);
+      }
+
+      // Verifica si el usuario tiene la propiedad de búsquedas recientes, si no, inicialízala
+      if (!usuario.recentSearch) {
+        usuario.recentSearch = [];
+      }
+
+      // Agrega la nueva búsqueda al principio del array y limita el tamaño del array a, por ejemplo, 10 elementos
+      usuario.recentSearch.unshift(searchQuery);
+      usuario.recentSearch = usuario.recentSearch.slice(0, 10);
+
+      // Guarda el usuario actualizado en la base de datos
+      return await this.usuarioRepository.save(usuario);
+    } catch (error) {
+      console.error(
+        `Error al agregar búsqueda reciente para el usuario con ID ${id}:`,
+        error.message,
+      );
+      throw error;
+    }
+  }
+
+  async getUserRecentSearches(userId: number): Promise<string[] | null> {
+    console.log(
+      `Buscando las búsquedas recientes del usuario con ID ${userId}...`,
+    );
+    try {
+      const user = await this.usuarioRepository.findOne({
+        where: { id: userId },
+      });
+
+      if (!user) {
+        throw new NotFoundException(`Usuario con ID ${userId} no encontrado`);
+      }
+      return user.recentSearch;
+    } catch (error) {
+      console.error(
+        `Error al buscar las búsquedas recientes del usuario: ${error.message}`,
+      );
+      throw error;
+    }
+  }
+
+  // servicio CRM
+
+  async addStoreToTanatorio(id: number, storeId: string): Promise<Usuario> {
+    const tanatorio = await this.usuarioRepository.findOne({
+      where: { id: id },
+    });
+    if (!tanatorio) {
+      throw new NotFoundException(`Tanatorio con ID ${id} no encontrado`);
+    }
+    if (!tanatorio.storeStockTanatorio) {
+      tanatorio.storeStockTanatorio = [];
+    }
+    tanatorio.storeStockTanatorio.push(storeId);
+    return this.usuarioRepository.save(tanatorio);
+  }
+
+  async removeStoreFromTanatorio(
+    id: number,
+    storeId: string,
+  ): Promise<Usuario> {
+    const tanatorio = await this.usuarioRepository.findOne({
+      where: { id: id },
+    });
+    if (!tanatorio) {
+      throw new NotFoundException(`Tanatorio con ID ${id} no encontrado`);
+    }
+    if (!tanatorio.storeStockTanatorio) {
+      throw new NotFoundException(`No hay tiendas asociadas al tanatorio`);
+    }
+    tanatorio.storeStockTanatorio = tanatorio.storeStockTanatorio.filter(
+      (s) => s !== storeId,
+    );
+    return this.usuarioRepository.save(tanatorio);
+  }
+
+  async removeAllTanatorioStores(tanatorioId: number): Promise<Usuario> {
+    console.log(
+      `Eliminando todas las tiendas asociadas al tanatorio con ID ${tanatorioId}...`,
+    );
+    try {
+      const tanatorio = await this.usuarioRepository.findOne({
+        where: { id: tanatorioId },
+      });
+      if (!tanatorio) {
+        throw new NotFoundException(
+          `Tanatorio con ID ${tanatorioId} no encontrado`,
+        );
+      }
+      tanatorio.storeStockTanatorio = [];
+      return this.usuarioRepository.save(tanatorio);
+    } catch (error) {
+      console.error(
+        `Error al eliminar todas las tiendas asociadas al tanatorio: ${error.message}`,
+      );
+      throw error;
+    }
+  }
 }

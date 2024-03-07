@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, Like } from 'typeorm';
 import { Funeral } from '../entities/funeral.entity';
 import { StoreFlorist } from '../../store/entities/store.entity';
 import { Usuario } from '../../users/entities/user.entity';
@@ -112,5 +112,13 @@ export class FuneralService {
         `Error getting products for funeral user: ${error.message}`,
       );
     }
+  }
+
+  async searchByName(name: string): Promise<Funeral[]> {
+    const searchString = String(name); // Convertir a cadena explícitamente
+    return await this.funeralRepository
+      .createQueryBuilder('funeral')
+      .where('funeral.name LIKE :name', { name: `%${searchString}%` })
+      .getMany();
   }
 }

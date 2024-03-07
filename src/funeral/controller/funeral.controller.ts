@@ -9,6 +9,7 @@ import {
   UploadedFiles,
   UseInterceptors,
   NotFoundException,
+  Query,
 } from '@nestjs/common';
 import { CreateFuneralDto } from '../dto/create-funeral.dto';
 import { UpdateFuneralDto } from '../dto/update-funeral.dto';
@@ -23,6 +24,7 @@ import { extname } from 'path';
 import { InjectRepository } from '@nestjs/typeorm';
 import Multer from 'multer';
 import { unlink } from 'fs';
+import { Funeral } from '../entities/funeral.entity';
 @Controller('funerals')
 export class FuneralController {
   constructor(
@@ -143,5 +145,13 @@ export class FuneralController {
     funeral.ceremonia_image = photoUrls[1];
     funeral.funeral_image = photoUrls[2];
     return this.funeralService.update(parseInt(id, 10), funeral);
+  }
+
+  @Post('search')
+  async searchFuneralsByName(
+    @Body() searchBody: { name: string },
+  ): Promise<Funeral[]> {
+    const { name } = searchBody;
+    return await this.funeralService.searchByName(name);
   }
 }
