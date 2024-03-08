@@ -1,8 +1,14 @@
 import { Controller, Post, Body } from '@nestjs/common';
 import { EmailService } from './mail.service';
+import * as crypto from 'crypto';
+import { UsuarioService } from 'src/users/services/users.service';
+
 @Controller('email')
 export class EmailController {
-  constructor(private readonly emailService: EmailService) {}
+  constructor(
+    private readonly emailService: EmailService,
+    private readonly usuarioService: UsuarioService,
+  ) {}
 
   @Post('/login')
   async login(@Body() body: { email: string; nombre: string }) {
@@ -82,8 +88,15 @@ export class EmailController {
   @Post('/pass-change')
   async sendPasswordResetLink(@Body('email') email: string) {
     try {
-      // Aquí debes construir el enlace para el restablecimiento de contraseña.
-      const resetLink = `http://localhost:3000/usuarios/pass-change/${email}`;
+      // Generar un token seguro basado en el correo electrónico del usuario
+      const token = crypto
+        .createHmac('sha256', 'clave_secreta')
+        .update(email)
+        .digest('hex');
+      // Construir el enlace para el restablecimiento de contraseña con el token incluido
+      await this.usuarioService.guardarTokenClave(email, token);
+
+      const resetLink = `http://44792771-e1fc-43d6-bade-2a329516381c.pub.instances.scw.cloud:3000/usuarios/pass-change/${email}/${token}`;
 
       // Envía el correo electrónico con el enlace de restablecimiento.
       await this.emailService.sendPasswordResetEmail(email, resetLink);

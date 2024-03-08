@@ -39,6 +39,9 @@ export class Usuario {
   photo: string;
 
   @Column({ nullable: true })
+  tokenClave: string;
+
+  @Column({ nullable: true })
   phone: string;
 
   @Column({ nullable: true }) // Aquí permitimos que lat pueda ser nulo

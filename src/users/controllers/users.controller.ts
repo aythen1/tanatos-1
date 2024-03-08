@@ -13,7 +13,7 @@ import {
   NotFoundException,
   UnauthorizedException,
   ParseIntPipe,
-  Query,
+  Res,
 } from '@nestjs/common';
 import { UsuarioService } from '../../users/services/users.service';
 import { CreateUsuarioDto } from '../dto/create-user.dto';
@@ -32,6 +32,15 @@ export class UsuarioController {
     private readonly usuarioService: UsuarioService,
     private readonly emailService: EmailService,
   ) {}
+
+  @Get('funeral-store-by-state')
+  async getFuneralAndStoreByState(@Res() res) {
+    console.log('Obteniendo tanatorios y floristerias por estado...');
+    const htmlContent =
+      await this.usuarioService.getFuneralAndStoreByStateAsHTML();
+    res.header('Content-Type', 'text/html'); // Establece el tipo de contenido como HTML
+    res.status(200).send(htmlContent);
+  }
 
   @Get(':id/products')
   async getUserStoreProducts(@Param('id') id: string) {
@@ -248,11 +257,23 @@ export class UsuarioController {
     return store;
   }
 
-  @Get('pass-change/:email')
-  async showPasswordChangeForm(@Param('email') email: string) {
+  @Get('pass-change/:email/:token?') // El "?" indica que el token es opcional
+  async showPasswordChangeForm(
+    @Param('email') email: string,
+    @Param('token') token?: string,
+  ) {
     try {
       // Busca el usuario por su correo electrónico
       const usuario = await this.usuarioService.findOneByEmail(email);
+
+      if (!usuario) {
+        throw new NotFoundException('Usuario no encontrado');
+      }
+
+      // Verificar si el token del usuario corresponde al proporcionado en la URL
+      if (usuario.tokenClave !== token) {
+        return { error: 'Este token no corresponde a este usuario' };
+      }
 
       // Verifica si el usuario existe
       if (!usuario) {

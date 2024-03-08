@@ -2,7 +2,6 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Usuario } from '../../users/entities/user.entity';
-import { Funeral } from '../../funeral/entities/funeral.entity';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -10,9 +9,6 @@ export class UsuarioService {
   constructor(
     @InjectRepository(Usuario)
     private usuarioRepository: Repository<Usuario>,
-
-    @InjectRepository(Funeral)
-    private funeralRepository: Repository<Funeral>,
   ) {}
 
   async findOneWithStore(id: number): Promise<Usuario> {
@@ -315,6 +311,85 @@ export class UsuarioService {
         `Error al eliminar todas las tiendas asociadas al tanatorio: ${error.message}`,
       );
       throw error;
+    }
+  }
+
+  async getFuneralAndStoreByStateAsHTML(): Promise<string> {
+    const users = await this.usuarioRepository.find({
+      where: [{ user_type: 'funeral' }, { user_type: 'store' }],
+    });
+
+    const result = {};
+
+    users.forEach((user) => {
+      const { state, user_type, id, username } = user;
+
+      if (!result[state]) {
+        result[state] = { tanatorios: [], floristerias: [] };
+      }
+
+      if (user_type === 'funeral') {
+        result[state].tanatorios.push({ id, username });
+      } else if (user_type === 'store') {
+        result[state].floristerias.push({ id, username });
+      }
+    });
+
+    // Generar HTML basado en los datos obtenidos
+    let html = `
+      <html>
+      <head>
+        <title>Ubicación de Tanatorios y Floristerias</title>
+        <style>
+          body {
+            background-color: #f5f5dc; /* Blanco crema */
+            color: #333; /* Negro grisaceo */
+            font-family: Arial, sans-serif;
+          }
+          h1 {
+            color: #000; /* Negro */
+          }
+          h2 {
+            color: #9400d3; /* Violeta oscuro */
+          }
+          ul {
+            list-style-type: none;
+          }
+          li {
+            margin-bottom: 10px;
+          }
+        </style>
+      </head>
+      <body>
+        <h1>Tanatorios y Floristerias por Estado</h1>`;
+
+    for (const state in result) {
+      html += `<h2>${state}</h2>`;
+      html += '<ul>';
+
+      result[state].tanatorios.forEach((tanatorio) => {
+        html += `<li>Tanatorio - ID: ${tanatorio.id}, Nombre: ${tanatorio.username}</li>`;
+      });
+
+      result[state].floristerias.forEach((floristeria) => {
+        html += `<li>Floristeria - ID: ${floristeria.id}, Nombre: ${floristeria.username}</li>`;
+      });
+
+      html += '</ul>';
+    }
+
+    html += '</body></html>';
+
+    return html;
+  }
+
+  async guardarTokenClave(email: string, token: string): Promise<void> {
+    const usuario = await this.usuarioRepository.findOne({
+      where: { email: email },
+    });
+    if (usuario) {
+      usuario.tokenClave = token;
+      await this.usuarioRepository.save(usuario);
     }
   }
 }

@@ -41,6 +41,10 @@ export class UpdateUsuarioDto extends PartialType(CreateUsuarioDto) {
   photo?: string;
 
   @IsOptional()
+  @IsString()
+  tokenClave: string;
+
+  @IsOptional()
   @IsString({ message: 'Phone should be a string' })
   @MaxLength(20, { message: 'Phone should be at most 20 characters long' })
   phone?: string;
