@@ -113,37 +113,42 @@ export class FuneralController {
       },
     ),
   )
+  @Post('upload-files/:id')
   async uploadFiles(
     @UploadedFiles() files: Record<string, Multer.File[]>,
     @Param('id') id: string,
   ): Promise<any> {
     console.log(files);
     const photoUrls = await Promise.all([
-      upload(files.image[0].path),
-      upload(files.ceremonia_image[0].path),
-      upload(files.funeral_image[0].path),
+      files.image ? upload(files.image[0].path) : null,
+      files.ceremonia_image ? upload(files.ceremonia_image[0].path) : null,
+      files.funeral_image ? upload(files.funeral_image[0].path) : null,
     ]);
+
     console.log(`Actualizando funeral con ID ${id}...`);
-    console.log(photoUrls, 'estas serían las URLs');
+    console.log(
+      photoUrls.filter((url) => url),
+      'estas serían las URLs',
+    );
+
     const funeral = await this.funeralService.findOne(parseInt(id, 10));
     if (!funeral) {
       throw new NotFoundException(`Funeral con ID ${id} no encontrado`);
     }
+
     // Elimina los archivos de la carpeta uploads
     Object.values(files).forEach((fileArray) => {
       fileArray.forEach((file) => {
-        unlink(file.path, (err) => {
-          if (err) {
-            console.error('Error al eliminar el archivo:', err);
-          } else {
-            console.log('Archivo eliminado exitosamente');
-          }
-        });
+        unlink(file.path)
+          .then(() => console.log('Archivo eliminado exitosamente'))
+          .catch((err) => console.error('Error al eliminar el archivo:', err));
       });
     });
-    funeral.image = photoUrls[0];
-    funeral.ceremonia_image = photoUrls[1];
-    funeral.funeral_image = photoUrls[2];
+
+    if (photoUrls[0]) funeral.image = photoUrls[0];
+    if (photoUrls[1]) funeral.ceremonia_image = photoUrls[1];
+    if (photoUrls[2]) funeral.funeral_image = photoUrls[2];
+
     return this.funeralService.update(parseInt(id, 10), funeral);
   }
 

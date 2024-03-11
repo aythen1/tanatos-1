@@ -55,6 +55,9 @@ export class Usuario {
   @Column({ nullable: true })
   gender: string;
 
+  @Column({ nullable: true })
+  stripeId: string;
+
   @Column()
   user_type: string;
 

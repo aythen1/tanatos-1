@@ -1,6 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { CreateStripeDto } from './dto/create-stripe.dto';
-import { UpdateStripeDto } from './dto/update-stripe.dto';
 import Stripe from 'stripe';
 @Injectable()
 export class StripeService {
@@ -8,57 +6,89 @@ export class StripeService {
 
   constructor() {
     this.stripe = new Stripe(
-      'pk_live_51OocYQGmE60O5ob7CponAE51NmwS0M1Ys3qFk6z9nOQIoIQwc6ZwIDDdjVDU4AW9rTI7YiNmxHQ227vXQzq5TGV100jZrXEd2h',
+      'sk_test_51OocYQGmE60O5ob7URy3YpGfHVIju6x3fuDdxXUy5R0rAdaorSHfskHNcBHToSoEfwJhFHtFDCguj7aGPlywD2pp00f2X9h9et',
     );
   }
-  async createPaymentIntent(
-    amount: number,
-    currency: string,
-  ): Promise<Stripe.PaymentIntent> {
-    return this.stripe.paymentIntents.create({
-      amount,
-      currency,
-      payment_method: 'pm_card_visa',
-      customer: 'cus_PduSBB9pXxowfG',
-      confirm: true,
-      return_url: 'http://www.google.com',
+  async createPaymentSession(): Promise<any> {
+    const paymentIntent = await this.stripe.paymentIntents.create({
+      amount: 10000,
+      currency: 'usd',
       transfer_group: 'ORDER10',
     });
+
+    return paymentIntent;
   }
-  async createTransfer(
-    amount: number,
-    currency: string,
-    destination: string,
-  ): Promise<Stripe.Transfer> {
+
+  async createExpressAccount(): Promise<any> {
     try {
-      const transfer = await this.stripe.transfers.create({
-        amount,
-        currency,
-        destination,
-        transfer_group: 'ORDER10', // Use the same transfer group
+      const account = await this.stripe.accounts.create({
+        type: 'express',
       });
-      console.log('Transfer created successfully:', transfer);
-      return transfer;
+      return account;
     } catch (error) {
-      console.error('Error creating transfer:', error);
+      // Handle error
       throw error;
     }
   }
-  findAll() {
-    return `This action returns all stripe`;
+  async createAccountLink(acc: string): Promise<any> {
+    try {
+      const accountLink = await this.stripe.accountLinks.create({
+        account: acc,
+        refresh_url: 'https://example.com/reauth',
+        return_url: 'https://example.com/return',
+        type: 'account_onboarding',
+      });
+      return accountLink;
+    } catch (error) {
+      // Handle error
+      throw error;
+    }
+  }
+  async createPaymentSheet(price: number): Promise<any> {
+    try {
+      // Use an existing Customer ID if this is a returning customer.
+      const customer = await this.stripe.customers.create();
+
+      const ephemeralKey = await this.stripe.ephemeralKeys.create(
+        { customer: customer.id },
+        { apiVersion: '2023-10-16' },
+      );
+
+      const paymentIntent = await this.stripe.paymentIntents.create({
+        amount: price, // Use the price provided in the request body
+        currency: 'eur',
+        customer: customer.id,
+        // In the latest version of the API, specifying the `automatic_payment_methods` parameter
+        // is optional because Stripe enables its functionality by default.
+        automatic_payment_methods: {
+          enabled: true,
+        },
+        application_fee_amount: 123,
+        transfer_data: {
+          destination: 'acct_1Ot0jVGhmk7koxxT',
+        },
+      });
+
+      return {
+        paymentIntent: paymentIntent.client_secret,
+        ephemeralKey: ephemeralKey.secret,
+        customer: customer.id,
+        publishableKey:
+          'sk_test_51OocYQGmE60O5ob7URy3YpGfHVIju6x3fuDdxXUy5R0rAdaorSHfskHNcBHToSoEfwJhFHtFDCguj7aGPlywD2pp00f2X9h9et',
+      };
+    } catch (error) {
+      // Handle error
+      throw error;
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} stripe`;
+  async handlePaymentSuccess(): Promise<any> {
+    // Lógica para manejar el éxito de la transacción de pago
   }
 
-  update(id: number, updateStripeDto: UpdateStripeDto) {
-    return `This action updates a #${id} stripe`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} stripe`;
+  async handlePaymentCancel(): Promise<any> {
+    // Lógica para manejar la cancelación de la transacción de pago
   }
 }
 
-('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');
+('');

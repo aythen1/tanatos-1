@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Res,
 } from '@nestjs/common';
 import { StripeService } from './stripe.service';
 // Importa el TransferService
@@ -19,41 +20,32 @@ export class StripeController {
     private readonly stripeService: StripeService, // Inyecta el TransferService
   ) {}
 
-  @Post('payment-intent')
-  async createPaymentIntent(
-    @Body() body: { amount: number; currency: string },
-  ): Promise<Stripe.PaymentIntent> {
-    return this.stripeService.createPaymentIntent(body.amount, body.currency);
+  @Post('/create-session')
+  async createSession() {
+    return this.stripeService.createPaymentSession();
+  }
+  @Post('create-express-account')
+  async createExpressAccount(): Promise<any> {
+    return this.stripeService.createExpressAccount();
+  }
+  @Post('create-account-link')
+  async createAccountLink(@Body() body: { acc: string }): Promise<any> {
+    // Replace 'CONNECTED_ACCOUNT_ID' with the actual connected account ID
+    return this.stripeService.createAccountLink(body.acc);
   }
 
-  @Post('payment-transfer') // Define la ruta para la creación de transferencias
-  async createTransfer(
-    @Body() body: { amount: number; currency: string; destination: string },
-  ): Promise<Stripe.Transfer> {
-    return this.stripeService.createTransfer(
-      body.amount,
-      body.currency,
-      body.destination,
-    );
+  @Post('payment-sheet')
+  async createPaymentSheet(@Body() body: { price: number }): Promise<any> {
+    return this.stripeService.createPaymentSheet(body.price);
   }
 
-  @Get()
-  findAll() {
-    return this.stripeService.findAll();
+  @Get('/success')
+  async success() {
+    return this.stripeService.handlePaymentSuccess();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.stripeService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateStripeDto: UpdateStripeDto) {
-    return this.stripeService.update(+id, updateStripeDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.stripeService.remove(+id);
+  @Get('/cancel')
+  async cancel() {
+    return this.stripeService.handlePaymentCancel();
   }
 }
