@@ -39,6 +39,11 @@ export class StoreFloristController {
     return await this.storeFloristService.delete(id);
   }
 
+  @Get(':id/user')
+  async createBy(@Param('id') id: number) {
+    return await this.storeFloristService.createBy(id);
+  }
+
   @Get('user/:userId')
   async findByUserId(@Param('userId') userId: number) {
     console.log('user');

@@ -78,6 +78,11 @@ export class FuneralController {
     return this.funeralService.removeAllByUser(userId);
   }
 
+  @Get('/:id/user')
+  async createBy(@Param('id') userId: number): Promise<any> {
+    return this.funeralService.createBy(userId);
+  }
+
   @Get(':funeralUserId/products')
   async getStoreProductsForFuneral(
     @Param('funeralUserId') funeralUserId: number,
@@ -113,23 +118,24 @@ export class FuneralController {
       },
     ),
   )
-  @Post('upload-files/:id')
   async uploadFiles(
     @UploadedFiles() files: Record<string, Multer.File[]>,
     @Param('id') id: string,
   ): Promise<any> {
     console.log(files);
+
+    // Verificar si 'image' está presente y no es null
+    const imageUrl = files.image ? await upload(files.image[0].path) : null;
+
+    // Mapear las URL de las imágenes y manejar el caso de 'image' opcional
     const photoUrls = await Promise.all([
-      files.image ? upload(files.image[0].path) : null,
+      imageUrl, // 'image' puede ser null
       files.ceremonia_image ? upload(files.ceremonia_image[0].path) : null,
       files.funeral_image ? upload(files.funeral_image[0].path) : null,
     ]);
 
     console.log(`Actualizando funeral con ID ${id}...`);
-    console.log(
-      photoUrls.filter((url) => url),
-      'estas serían las URLs',
-    );
+    console.log(photoUrls, 'estas serían las URLs');
 
     const funeral = await this.funeralService.findOne(parseInt(id, 10));
     if (!funeral) {
@@ -139,15 +145,20 @@ export class FuneralController {
     // Elimina los archivos de la carpeta uploads
     Object.values(files).forEach((fileArray) => {
       fileArray.forEach((file) => {
-        unlink(file.path)
-          .then(() => console.log('Archivo eliminado exitosamente'))
-          .catch((err) => console.error('Error al eliminar el archivo:', err));
+        unlink(file.path, (err) => {
+          if (err) {
+            console.error('Error al eliminar el archivo:', err);
+          } else {
+            console.log('Archivo eliminado exitosamente');
+          }
+        });
       });
     });
 
-    if (photoUrls[0]) funeral.image = photoUrls[0];
-    if (photoUrls[1]) funeral.ceremonia_image = photoUrls[1];
-    if (photoUrls[2]) funeral.funeral_image = photoUrls[2];
+    // Asigna la URL de la imagen al funeral, si existe
+    funeral.image = imageUrl;
+    funeral.ceremonia_image = photoUrls[1];
+    funeral.funeral_image = photoUrls[2];
 
     return this.funeralService.update(parseInt(id, 10), funeral);
   }

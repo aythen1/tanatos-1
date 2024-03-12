@@ -283,59 +283,75 @@ export class UsuarioController {
 
       // Construye el HTML del formulario para cambiar la contraseña
       const passwordChangeForm = `
-      <html>
+      <!DOCTYPE html>
+      <html lang="en">
       <head>
-        <title>Cambia tu clave aquí</title>
-        <style>
-          body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f0f0f0;
-          }
-          form {
-            width: 300px;
-            padding: 20px;
-            background-color: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-          }
-          input {
-            width: calc(100% - 20px);
-            margin-bottom: 10px;
-            padding: 10px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-            font-size: 16px;
-            box-sizing: border-box;
-          }
-          button {
-            width: 100%;
-            padding: 10px;
-            border: none;
-            border-radius: 4px;
-            background-color: #007bff;
-            color: #ffffff;
-            font-size: 16px;
-            cursor: pointer;
-          }
-          button:hover {
-            background-color: #0056b3;
-          }
-        </style>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Cambia tu clave aquí</title>
+      <style>
+        body {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
+          margin: 0;
+          background-color: #050505; /* Fondo gris */
+        }
+        form {
+          width: 300px;
+          padding: 20px;
+          background-color: rgba(255, 255, 255, 0.12); /* Fondo cristal 3D mate */
+          border-radius: 16px;
+          box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+          backdrop-filter: blur(3.2px); /* Efecto de desenfoque */
+          -webkit-backdrop-filter: blur(3.2px);
+        }
+        input {
+          width: calc(100% - 20px); /* Ancho igual al botón */
+          margin-bottom: 20px; /* Separación aumentada */
+          padding: 10px;
+          border-radius: 4px;
+          border: 1px solid #ccc;
+          font-size: 16px;
+          box-sizing: border-box;
+        }
+        button {
+          width: calc(100% - 20px); /* Ancho igual al input */
+          padding: 10px;
+          border: none;
+          border-radius: 4px;
+          background-color: #4caf50; /* Color verde */
+          color: #ffffff; /* Letras blancas */
+          font-size: 16px;
+          cursor: pointer;
+        }
+        button:hover {
+          background-color: #388e3c; /* Cambio de color al pasar el mouse */
+        }
+        h1 {
+          color: #ffffff; /* Letras blancas */
+          text-align: center;
+          font-size: 24px;
+          margin-bottom: 20px;
+        }
+        label {
+          color: #ffffff; /* Letras blancas */
+          font-size: 16px;
+        }
+      </style>
       </head>
       <body>
-        <form method="POST" action="/usuarios/update-password">
-          <input type="hidden" name="email" value="${email}">
-          <h1>Cambia tu contraseña</h1>
-          <label for="password">Nueva contraseña:</label>
-          <input type="password" id="password" name="password" required pattern="[0-9]{4}" title="Recuerde que debe ser numérica y de 4 dígitos">
-          <button type="submit">Guardar cambios</button>
-        </form>
+      <form method="POST" action="/usuarios/update-password">
+        <input type="hidden" name="email" value="${email}">
+        <h1>Cambia tu contraseña</h1>
+        <label for="password">Nueva contraseña:</label>
+        <input type="password" id="password" name="password" required pattern="[0-9]{4}" title="Recuerde que debe ser numérica y de 4 dígitos">
+        <button type="submit">Guardar cambios</button>
+      </form>
       </body>
       </html>
+      
     `;
 
       // Retorna el HTML del formulario

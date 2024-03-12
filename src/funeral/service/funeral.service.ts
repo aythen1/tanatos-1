@@ -121,4 +121,20 @@ export class FuneralService {
       .where('funeral.name LIKE :name', { name: `%${searchString}%` })
       .getMany();
   }
+
+  async createBy(funeralId: number): Promise<Funeral> {
+    console.log(funeralId);
+    const funeralBy = await this.funeralRepository
+      .createQueryBuilder('funeral')
+      .leftJoinAndSelect('funeral.user', 'user')
+      .where('funeral.id = :funeralId', { funeralId })
+      .getOne();
+    console.log(funeralBy);
+
+    if (!funeralBy) {
+      throw new NotFoundException(`Funeral with ID ${funeralId} not found`);
+    }
+
+    return funeralBy;
+  }
 }

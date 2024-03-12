@@ -11,42 +11,67 @@ export class EmailController {
   ) {}
 
   @Post('/login')
-  async login(@Body() body: { email: string; nombre: string }) {
+  async login(@Body() body: { email: string; nombre: string; idioma: string }) {
     // ...
 
-    await this.emailService.sendWelcomeEmail(body.email, body.nombre);
+    await this.emailService.sendWelcomeEmail(
+      body.email,
+      body.nombre,
+      body.idioma,
+    );
   }
 
   @Post('/password-change')
   async sendPasswordChangeEmail(
-    @Body() body: { email: string; nombre: string; pass: string },
+    @Body()
+    body: {
+      email: string;
+      nombre: string;
+      pass: string;
+      idioma: string;
+    },
   ) {
     await this.emailService.sendPasswordChangeEmail(
       body.email,
       body.nombre,
       body.pass,
+      body.idioma,
     );
   }
 
   @Post('/order-placed')
   async sendOrderPlacedEmail(
-    @Body() body: { email: string; nombre: string; idPedido: number },
+    @Body()
+    body: {
+      email: string;
+      nombre: string;
+      idPedido: number;
+      idioma: string;
+    },
   ) {
     await this.emailService.sendOrderPlacedEmail(
       body.email,
       body.nombre,
       body.idPedido,
+      body.idioma,
     );
   }
 
   @Post('/order-approved')
   async sendOrderApprovedEmail(
-    @Body() body: { email: string; nombre: string; idPedido: number },
+    @Body()
+    body: {
+      email: string;
+      nombre: string;
+      idPedido: number;
+      idioma: string;
+    },
   ) {
     await this.emailService.sendOrderApprovedEmail(
       body.email,
       body.nombre,
       body.idPedido,
+      body.idioma,
     );
   }
 
@@ -58,12 +83,14 @@ export class EmailController {
       nombre: string;
       idPedido: number;
       monto: number;
+      idioma: string;
     },
   ) {
     await this.emailService.sendOrderCancelEmail(
       body.email,
       body.idPedido,
       body.nombre,
+      body.idioma,
     );
   }
 
@@ -75,6 +102,7 @@ export class EmailController {
       nombre: string;
       idPedido: number;
       monto: number;
+      idioma: string;
     },
   ) {
     await this.emailService.sendOrderPaidEmail(
@@ -82,11 +110,15 @@ export class EmailController {
       body.idPedido,
       body.nombre,
       body.monto,
+      body.idioma,
     );
   }
 
   @Post('/pass-change')
-  async sendPasswordResetLink(@Body('email') email: string) {
+  async sendPasswordResetLink(
+    @Body('email') email: string,
+    @Body('idioma') idioma: string,
+  ) {
     try {
       // Generar un token seguro basado en el correo electrónico del usuario
       const token = crypto
@@ -99,7 +131,7 @@ export class EmailController {
       const resetLink = `http://44792771-e1fc-43d6-bade-2a329516381c.pub.instances.scw.cloud:3000/usuarios/pass-change/${email}/${token}`;
 
       // Envía el correo electrónico con el enlace de restablecimiento.
-      await this.emailService.sendPasswordResetEmail(email, resetLink);
+      await this.emailService.sendPasswordResetEmail(email, resetLink, idioma);
 
       // Retorna una respuesta exitosa.
       return {

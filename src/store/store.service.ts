@@ -83,6 +83,19 @@ export class StoreFloristService {
     }
   }
 
+  async createBy(storeId: number): Promise<StoreFlorist> {
+    const storeBy = await this.storeFloristRepository.findOne({
+      where: { id: storeId },
+      relations: ['usuario'],
+    });
+
+    if (!storeBy) {
+      throw new NotFoundException(`StoreFlorist with ID ${storeId} not found`);
+    }
+
+    return storeBy;
+  }
+
   async findByUserId(userId: number) {
     try {
       console.log(`Buscando tiendas floristas del usuario con ID ${userId}...`);

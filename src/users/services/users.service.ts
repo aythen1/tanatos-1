@@ -170,27 +170,32 @@ export class UsuarioService {
       const successMessage = `
       <html>
       <head>
-        <title>Contraseña actualizada</title>
-        <style>
-          body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f0f0f0;
-          }
-          .message-container {
-            text-align: center;
-          }
-        </style>
+          <title>Contraseña actualizada</title>
+          <style>
+              body {
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                  height: 100vh;
+                  margin: 0;
+                  background-color: #050505; /* Fondo negro */
+                  color: #ffffff; /* Letras blancas */
+              }
+      
+              .message-container {
+                  text-align: center;
+              }
+      
+              h1 {
+                  font-size: 24px; /* Tamaño del texto aumentado */
+              }
+          </style>
       </head>
       <body>
-        <div class="message-container">
-          <h1>Contraseña actualizada correctamente</h1>
-        </div>
+          <div class="message-container">
+              <h1>Contraseña actualizada correctamente</h1>
+          </div>
       </body>
-      </html>
     `;
 
       // Retorna el HTML de éxito

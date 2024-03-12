@@ -24,6 +24,21 @@ export class StripeController {
   async createSession() {
     return this.stripeService.createPaymentSession();
   }
+  @Post('create-transfer')
+  async createTransfer(
+    @Body()
+    transferData: {
+      amount: number;
+      group: string;
+      destination: string;
+    },
+  ): Promise<any> {
+    return this.stripeService.createTransfer(
+      transferData.amount,
+      transferData.group,
+      transferData.destination,
+    );
+  }
   @Post('create-express-account')
   async createExpressAccount(): Promise<any> {
     return this.stripeService.createExpressAccount();

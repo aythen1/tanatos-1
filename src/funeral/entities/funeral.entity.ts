@@ -14,7 +14,7 @@ export class Funeral {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'varchar' })
+  @Column({ type: 'varchar', nullable: true })
   image: string;
 
   @Column({ type: 'varchar', length: 255 })
@@ -29,13 +29,13 @@ export class Funeral {
   @Column({ type: 'boolean', nullable: true })
   favorite: boolean;
 
-  @Column({ type: 'varchar' })
+  @Column({ type: 'varchar', nullable: true })
   ceremonia_image: string;
 
   @Column({ type: 'varchar' })
   funeral_image: string;
 
-  @Column({ type: 'date' })
+  @Column({ type: 'date', nullable: true })
   funeral_date: Date;
 
   @Column({ type: 'varchar' })
@@ -68,7 +68,6 @@ export class Funeral {
   @ManyToOne(() => Usuario)
   @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
   user: Usuario;
-
   @OneToMany(() => Favorito, (favorito) => favorito.funeral)
   favoritos: Favorito[];
 }

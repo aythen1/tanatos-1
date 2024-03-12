@@ -53,7 +53,7 @@ export class StripeService {
         { customer: customer.id },
         { apiVersion: '2023-10-16' },
       );
-
+      const gr = 'group1';
       const paymentIntent = await this.stripe.paymentIntents.create({
         amount: price, // Use the price provided in the request body
         currency: 'eur',
@@ -63,11 +63,13 @@ export class StripeService {
         automatic_payment_methods: {
           enabled: true,
         },
-        application_fee_amount: 123,
-        transfer_data: {
-          destination: 'acct_1Ot0jVGhmk7koxxT',
-        },
+        // application_fee_amount: 123,
+        // transfer_data: {
+        //   destination: 'acct_1Ot0jVGhmk7koxxT',
+        // },
+        transfer_group: gr,
       });
+      console.log(paymentIntent, 'payment');
 
       return {
         paymentIntent: paymentIntent.client_secret,
@@ -78,6 +80,24 @@ export class StripeService {
       };
     } catch (error) {
       // Handle error
+      throw error;
+    }
+  }
+  async createTransfer(
+    amount: number,
+    group: string,
+    destination: string,
+  ): Promise<any> {
+    try {
+      const transfer = await this.stripe.transfers.create({
+        amount,
+        currency: 'eur',
+        destination,
+        transfer_group: group,
+      });
+
+      return transfer;
+    } catch (error) {
       throw error;
     }
   }
