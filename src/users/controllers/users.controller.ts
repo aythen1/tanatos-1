@@ -25,6 +25,7 @@ import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { unlink } from 'fs';
 import { EmailService } from 'src/mail/mail.service';
+import { Usuario } from '../entities/user.entity';
 
 @Controller('usuarios')
 export class UsuarioController {
@@ -429,5 +430,13 @@ export class UsuarioController {
     );
     const result = await this.usuarioService.removeAllTanatorioStores(+id);
     return result;
+  }
+
+  @Post('search-city')
+  async searchUsersByCity(
+    @Body() searchBody: { city: string },
+  ): Promise<Usuario[]> {
+    const { city } = searchBody;
+    return await this.usuarioService.searchByCity(city);
   }
 }

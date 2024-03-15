@@ -397,4 +397,11 @@ export class UsuarioService {
       await this.usuarioRepository.save(usuario);
     }
   }
+
+  async searchByCity(city: string): Promise<Usuario[]> {
+    return await this.usuarioRepository
+      .createQueryBuilder('usuario')
+      .where('usuario.city LIKE :city', { city: `%${city}%` })
+      .getMany();
+  }
 }
