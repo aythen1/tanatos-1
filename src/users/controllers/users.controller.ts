@@ -428,6 +428,8 @@ export class UsuarioController {
     console.log(
       `Eliminando todas las tiendas asociadas al tanatorio con ID ${id}...`,
     );
+    console.log('1');
+
     const result = await this.usuarioService.removeAllTanatorioStores(+id);
     return result;
   }
@@ -435,7 +437,6 @@ export class UsuarioController {
   @Post('search-city')
   async searchUsersByCity(
     @Body() searchBody: { city: string },
-    console.log("1")
   ): Promise<Usuario[]> {
     const { city } = searchBody;
     return await this.usuarioService.searchByCity(city);
