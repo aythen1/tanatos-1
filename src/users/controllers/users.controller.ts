@@ -435,6 +435,7 @@ export class UsuarioController {
   @Post('search-city')
   async searchUsersByCity(
     @Body() searchBody: { city: string },
+    console.log("1")
   ): Promise<Usuario[]> {
     const { city } = searchBody;
     return await this.usuarioService.searchByCity(city);
