@@ -347,7 +347,7 @@ export class UsuarioController {
         <input type="hidden" name="email" value="${email}">
         <h1>Cambia tu contraseña</h1>
         <label for="password">Nueva contraseña:</label>
-        <input type="password" id="password" name="password" required pattern="[0-9]{4}" title="Recuerde que debe ser numérica y de 4 dígitos">
+        <input type="password" id="password" name="password" required pattern="[0-9]{4,20}" title="Recuerde que debe ser numérica y tener de 4 a 20 dígitos">
         <button type="submit">Guardar cambios</button>
       </form>
       </body>

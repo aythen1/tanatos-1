@@ -50,8 +50,10 @@ export class StripeController {
   }
 
   @Post('payment-sheet')
-  async createPaymentSheet(@Body() body: { price: number }): Promise<any> {
-    return this.stripeService.createPaymentSheet(body.price);
+  async createPaymentSheet(
+    @Body() body: { price: number; email: string },
+  ): Promise<any> {
+    return this.stripeService.createPaymentSheet(body.price, body.email);
   }
 
   @Get('/success')

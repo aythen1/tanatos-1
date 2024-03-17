@@ -73,7 +73,7 @@ export class EmailService {
       let subject = 'Tanatos: solicitud de flores en proceso.';
       let content = `
         <h1>Hola ${nombre}</h1>
-        <p>¡Tu pedido ${idPedido} ha sido realizado exitosamente!</p>
+        <p>¡Tu pedido ${idPedido} ha sido realizado y pagado exitosamente!</p>
         <p>En este momento estamos procesando tu pedido, en menos de 24hs le informaremos por este medio el estado de tal.</p>
         <p>Le sugerimos estarse atento/a a este canal.</p>          
         <br></br>
@@ -116,11 +116,11 @@ export class EmailService {
     idioma: string,
   ) {
     try {
-      let subject = 'Tanatos: solicitud aprobada, ultimo paso.';
+      let subject = 'Tanatos: solicitud aprobada.';
       let content = `
         <h1>Hola ${nombre}</h1>
-        <p>¡Ya puedes ingresar a la app y realizar tu pago por el pedido con numero ${idPedido}!</p>
-        <p>Las flores seran preparadas para llegar a tu ser querido en cuanto cumplas este ultimo paso.</p>
+        <p>¡Tu pedido con numero ${idPedido} ya se encuentra en marcha!</p>
+        <p>Las flores seran preparadas para llegar a tu ser querido.</p>
         <p>Gracias por tu confianza.</p>
         <br></br>
         <br></br>
@@ -131,14 +131,14 @@ export class EmailService {
       if (idioma === 'en') {
         subject = 'Tanatos: request approved, final step.';
         content = `
-          <h1>Hello ${nombre}</h1>
-          <p>You can now access the app and make your payment for order number ${idPedido}!</p>
-          <p>The flowers will be prepared to reach your loved one as soon as you complete this final step.</p>
-          <p>Thank you for your trust.</p>
-          <br></br>
-          <br></br>
-          <p>Best regards,</p>
-          <p>Tanatos team.</p>
+        <h1>Hello ${nombre}</h1>
+<p>Your order with number ${idPedido} is now underway!</p>
+<p>The flowers will be prepared to reach your loved one.</p>
+<p>Thank you for your trust.</p>
+<br></br>
+<br></br>
+<p>Yours sincerely,</p>
+<p>The Tanatos team.</p>
         `;
       }
 

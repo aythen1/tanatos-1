@@ -44,7 +44,7 @@ export class StripeService {
       throw error;
     }
   }
-  async createPaymentSheet(price: number): Promise<any> {
+  async createPaymentSheet(price: number, email: string): Promise<any> {
     try {
       // Use an existing Customer ID if this is a returning customer.
       const customer = await this.stripe.customers.create();
@@ -59,7 +59,7 @@ export class StripeService {
         currency: 'usd',
         customer: customer.id,
         description: 'Gracias por tu compra!',
-        receipt_email: 'azschiaffino@gmail.com',
+        receipt_email: email,
         // In the latest version of the API, specifying the `automatic_payment_methods` parameter
         // is optional because Stripe enables its functionality by default.
         automatic_payment_methods: {
