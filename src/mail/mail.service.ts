@@ -214,7 +214,7 @@ export class EmailService {
         <h1>Hola ${nombre}</h1>
         <p>Tu pedido en Tanatos con numero ${idPedido} ha sido cancelado.</p>
         <p>Este mensaje es para dejarte al tanto de la situacion del pedido.</p>
-        <p>Si aun deceas hacerle llegar las flores a tu persona querida, siempre podras volver a su esquela y solicitar otro pedido.</p>
+        <p>Si aun deseas hacerle llegar las flores a tu persona querida, siempre podras volver a su esquela y solicitar otro pedido.</p>
         <p>Gracias por tu confianza.</p>
         <br></br>
         <br></br>

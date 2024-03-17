@@ -56,8 +56,9 @@ export class StripeService {
       const gr = 'group1';
       const paymentIntent = await this.stripe.paymentIntents.create({
         amount: price, // Use the price provided in the request body
-        currency: 'eur',
+        currency: 'usd',
         customer: customer.id,
+        receipt_email: 'azschiaffino@gmail.com',
         // In the latest version of the API, specifying the `automatic_payment_methods` parameter
         // is optional because Stripe enables its functionality by default.
         automatic_payment_methods: {

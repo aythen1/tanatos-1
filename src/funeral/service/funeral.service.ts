@@ -118,7 +118,13 @@ export class FuneralService {
     const searchString = String(name); // Convertir a cadena explícitamente
     return await this.funeralRepository
       .createQueryBuilder('funeral')
-      .where('funeral.name LIKE :name', { name: `%${searchString}%` })
+      .where(
+        'funeral.name LIKE :name OR funeral.funeral_location LIKE :location',
+        {
+          name: `%${searchString}%`,
+          location: `%${searchString}%`,
+        },
+      )
       .getMany();
   }
 
