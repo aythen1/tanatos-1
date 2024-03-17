@@ -58,6 +58,7 @@ export class StripeService {
         amount: price, // Use the price provided in the request body
         currency: 'usd',
         customer: customer.id,
+        description: 'Gracias por tu compra!',
         receipt_email: 'azschiaffino@gmail.com',
         // In the latest version of the API, specifying the `automatic_payment_methods` parameter
         // is optional because Stripe enables its functionality by default.
