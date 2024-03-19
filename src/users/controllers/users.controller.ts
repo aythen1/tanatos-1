@@ -340,6 +340,11 @@ export class UsuarioController {
           color: #ffffff; /* Letras blancas */
           font-size: 16px;
         }
+        .error-message {
+          color: #ff0000; /* Color rojo */
+          font-size: 14px;
+          margin-top: 5px;
+        }
       </style>
       </head>
       <body>
@@ -348,10 +353,12 @@ export class UsuarioController {
         <h1>Cambia tu contraseña</h1>
         <label for="password">Nueva contraseña:</label>
         <input type="password" id="password" name="password" required pattern="[0-9]{4,20}" title="Recuerde que debe ser numérica y tener de 4 a 20 dígitos">
+        <span class="error-message">La contraseña debe ser numérica y tener entre 4 y 20 dígitos.</span>
         <button type="submit">Guardar cambios</button>
       </form>
       </body>
       </html>
+      
       
     `;
 

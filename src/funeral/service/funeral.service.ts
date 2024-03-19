@@ -69,7 +69,17 @@ export class FuneralService {
   }
 
   async removeAll() {
-    return this.funeralRepository.delete({});
+    // Obtener todos los funerales
+    const funerals = await this.funeralRepository.find();
+
+    // Iterar sobre cada funeral y eliminar sus relaciones antes de borrarlo
+    for (const funeral of funerals) {
+      // Eliminar los favoritos asociados a este funeral
+      await this.favoritoRepository.delete({ funeral });
+
+      // Luego puedes eliminar el funeral
+      await this.funeralRepository.delete(funeral.id);
+    }
   }
 
   async removeAllByUser(userId) {

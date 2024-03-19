@@ -17,23 +17,18 @@ export class EmailService {
     });
   }
 
-  async sendPasswordChangeEmail(
-    email: string,
-    nombre: string,
-    pass: string,
-    idioma: string,
-  ) {
+  async sendPasswordChangeEmail(email: string, nombre: string, idioma: string) {
     try {
       let subject = 'Tanatos: ¡Se ha cambiado tu contraseña!';
       let content = `
-        <h1>Hola ${nombre},</h1>
-        <p>Al parecer no recuerdas tu clave de Tanatos!.</p>
-        <p>Contraseña:  ${pass}.</p>
-        <p>Esta de aquí arriba es tu clave, puedes acceder a tu cuenta con ella.</p>
-        <br></br>
-        <br></br>
-        <p>Atentamente,</p>
-        <p>el equipo Tanatos</p>
+      <h1>Hola ${nombre},</h1>
+<p>Al parecer has cambiado tu contraseña en Tanatos.</p>
+<p>Si no fuiste tú quien realizó este cambio, te recomendamos que solicites una recuperación de contraseña de inmediato.</p>
+<br></br>
+<br></br>
+<p>Atentamente,</p>
+<p>El equipo de Tanatos</p>
+
       `;
 
       if (idioma === 'en') {
@@ -70,16 +65,16 @@ export class EmailService {
     idioma: string,
   ) {
     try {
-      let subject = 'Tanatos: solicitud de flores en proceso.';
+      let subject = 'Tanatos: Solicitud de flores en proceso.';
       let content = `
         <h1>Hola ${nombre}</h1>
         <p>¡Tu pedido ${idPedido} ha sido realizado y pagado exitosamente!</p>
-        <p>En este momento estamos procesando tu pedido, en menos de 24hs le informaremos por este medio el estado de tal.</p>
-        <p>Le sugerimos estarse atento/a a este canal.</p>          
+        <p>En este momento estamos procesando tu pedido. En menos de 24 horas te informaremos por este medio sobre su estado.</p>
+        <p>Te recomendamos que estés atento/a a este canal.</p>          
         <br></br>
         <br></br>
         <p>Atentamente,</p>
-        <p>el equipo de Tanatos.</p>
+        <p>El equipo de Tanatos.</p>
       `;
 
       if (idioma === 'en') {
@@ -116,16 +111,16 @@ export class EmailService {
     idioma: string,
   ) {
     try {
-      let subject = 'Tanatos: solicitud aprobada.';
+      let subject = 'Tanatos: ¡Pedido en marcha!';
       let content = `
         <h1>Hola ${nombre}</h1>
-        <p>¡Tu pedido con numero ${idPedido} ya se encuentra en marcha!</p>
-        <p>Las flores seran preparadas para llegar a tu ser querido.</p>
+        <p>¡Tu pedido con número ${idPedido} ya está en marcha!</p>
+        <p>Las flores están siendo preparadas para llegar a tu ser querido.</p>
         <p>Gracias por tu confianza.</p>
         <br></br>
         <br></br>
         <p>Atentamente,</p>
-        <p>el equipo de Tanatos.</p>
+        <p>El equipo de Tanatos.</p>
       `;
 
       if (idioma === 'en') {
@@ -163,16 +158,16 @@ export class EmailService {
     idioma: string,
   ) {
     try {
-      let subject = 'Tanatos: pago finalizado, flores en camino.';
+      let subject = 'Tanatos: Pago finalizado, flores en camino.';
       let content = `
         <h1>Hola ${nombre}</h1>
-        <p>Tu pedido en Tanatos con numero ${idPedido} ha sido pagado correctamente.</p>
+        <p>Tu pedido en Tanatos con número ${idPedido} ha sido pagado correctamente.</p>
         <p>El monto total de la factura fue de $${monto}.</p>
         <p>Gracias por hacernos parte, siempre estaremos para acompañarte.</p>
         <br></br>
         <br></br>
         <p>Atentamente,</p>
-        <p>el equipo de Tanatos.</p>
+        <p>El equipo de Tanatos.</p>
       `;
 
       if (idioma === 'en') {
@@ -297,11 +292,11 @@ export class EmailService {
     try {
       let subject = 'Tanatos: Restablecimiento de contraseña';
       let content = `
-        <h1>Olvidó su contraseña?</h1>
+        <h1>¿Olvidaste tu contraseña?</h1>
         <p>Parece que has olvidado tu contraseña de Tanatos. No te preocupes, estamos aquí para ayudarte.</p>
         <p>Haz clic en el siguiente enlace para restablecer tu contraseña:</p>
         <a href="${resetLink}">${resetLink}</a>
-        <p>Si no has solicitado restablecer tu contraseña, puedes ignorar este correo electrónico de forma segura.</p>
+        <p>Si no has solicitado restablecer tu contraseña, puedes ignorar este correo electrónico con seguridad.</p>
       `;
 
       if (idioma === 'en') {

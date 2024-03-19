@@ -27,14 +27,12 @@ export class EmailController {
     body: {
       email: string;
       nombre: string;
-      pass: string;
       idioma: string;
     },
   ) {
     await this.emailService.sendPasswordChangeEmail(
       body.email,
       body.nombre,
-      body.pass,
       body.idioma,
     );
   }
