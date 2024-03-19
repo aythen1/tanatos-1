@@ -36,7 +36,6 @@ export class EmailService {
         content = `
           <h1>Hello ${nombre},</h1>
           <p>It seems you've forgotten your Tanatos password!</p>
-          <p>Password: ${pass}.</p>
           <p>This is your password, you can access your account with it.</p>
           <br></br>
           <br></br>
