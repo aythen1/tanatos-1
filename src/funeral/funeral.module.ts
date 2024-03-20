@@ -6,10 +6,11 @@ import { Funeral } from './entities/funeral.entity';
 import { Usuario } from '../users/entities/user.entity';
 import { StoreFlorist } from '../store/entities/store.entity';
 import { Favorito } from 'src/favoritos/entities/favorito.entity';
+import { Order } from 'src/order/entities/order.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Funeral, Usuario, StoreFlorist, Favorito]),
+    TypeOrmModule.forFeature([Funeral, Usuario, StoreFlorist, Favorito, Order]),
   ],
   controllers: [FuneralController],
   providers: [FuneralService],

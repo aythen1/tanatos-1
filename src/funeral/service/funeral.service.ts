@@ -5,6 +5,7 @@ import { Funeral } from '../entities/funeral.entity';
 import { StoreFlorist } from '../../store/entities/store.entity';
 import { Usuario } from '../../users/entities/user.entity';
 import { Favorito } from 'src/favoritos/entities/favorito.entity';
+import { Order } from 'src/order/entities/order.entity';
 
 @Injectable()
 export class FuneralService {
@@ -17,6 +18,8 @@ export class FuneralService {
     private readonly storeRepository: Repository<StoreFlorist>,
     @InjectRepository(Favorito)
     private readonly favoritoRepository: Repository<Favorito>,
+    @InjectRepository(Order)
+    private readonly orderRepository: Repository<Order>,
   ) {}
 
   async create(createFuneralDto) {
@@ -62,7 +65,6 @@ export class FuneralService {
       throw error;
     }
   }
-
   async remove(id: number) {
     // Buscar el funeral por su ID
     const funeral = await this.funeralRepository.findOne({
@@ -75,8 +77,18 @@ export class FuneralService {
       throw new Error('Funeral not found');
     }
 
+    // Buscar todas las órdenes relacionadas con el funeral a través de la entidad Order
+    const orders = await this.orderRepository.find({
+      where: { esquela: funeral },
+    });
+
     // Eliminar todos los registros de la relación 'favoritos' del funeral
     await this.favoritoRepository.remove(funeral.favoritos);
+
+    // Eliminar todas las órdenes relacionadas con el funeral
+    for (const order of orders) {
+      await this.orderRepository.remove(order);
+    }
 
     // Eliminar el funeral
     return this.funeralRepository.remove(funeral);
