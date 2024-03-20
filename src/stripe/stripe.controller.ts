@@ -56,13 +56,18 @@ export class StripeController {
     return this.stripeService.createPaymentSheet(body.price, body.email);
   }
 
-  @Get('/success')
-  async success() {
-    return this.stripeService.handlePaymentSuccess();
-  }
-
-  @Get('/cancel')
-  async cancel() {
-    return this.stripeService.handlePaymentCancel();
+  @Get('transfers/:destination')
+  async listTransfers(@Param('destination') destination: string): Promise<any> {
+    console.log('entra');
+    const limit = 50; // Puedes establecer el límite según tus necesidades
+    try {
+      const transfers = await this.stripeService.listTransfers(
+        destination,
+        limit,
+      );
+      return transfers;
+    } catch (error) {
+      return { error: error.message };
+    }
   }
 }

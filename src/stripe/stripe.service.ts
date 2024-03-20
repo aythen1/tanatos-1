@@ -103,13 +103,16 @@ export class StripeService {
       throw error;
     }
   }
-
-  async handlePaymentSuccess(): Promise<any> {
-    // Lógica para manejar el éxito de la transacción de pago
-  }
-
-  async handlePaymentCancel(): Promise<any> {
-    // Lógica para manejar la cancelación de la transacción de pago
+  async listTransfers(destination: string, limit: number): Promise<any> {
+    try {
+      const transfers = await this.stripe.transfers.list({
+        limit,
+        destination,
+      });
+      return transfers.data;
+    } catch (error) {
+      throw new Error(`Error al listar transferencias: ${error.message}`);
+    }
   }
 }
 
