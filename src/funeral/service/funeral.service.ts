@@ -63,8 +63,22 @@ export class FuneralService {
     }
   }
 
-  async remove(id) {
-    const funeral = await this.findOne(id);
+  async remove(id: number) {
+    // Buscar el funeral por su ID
+    const funeral = await this.funeralRepository.findOne({
+      where: { id: id },
+      relations: ['favoritos'],
+    });
+
+    // Si no se encuentra el funeral, lanzar una excepción o manejar el caso según tu lógica de negocio
+    if (!funeral) {
+      throw new Error('Funeral not found');
+    }
+
+    // Eliminar todos los registros de la relación 'favoritos' del funeral
+    await this.favoritoRepository.remove(funeral.favoritos);
+
+    // Eliminar el funeral
     return this.funeralRepository.remove(funeral);
   }
 
