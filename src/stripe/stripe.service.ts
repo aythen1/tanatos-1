@@ -6,7 +6,7 @@ export class StripeService {
 
   constructor() {
     this.stripe = new Stripe(
-      'sk_test_51OocYQGmE60O5ob7URy3YpGfHVIju6x3fuDdxXUy5R0rAdaorSHfskHNcBHToSoEfwJhFHtFDCguj7aGPlywD2pp00f2X9h9et',
+      'pk_live_51OocYQGmE60O5ob7CponAE51NmwS0M1Ys3qFk6z9nOQIoIQwc6ZwIDDdjVDU4AW9rTI7YiNmxHQ227vXQzq5TGV100jZrXEd2h',
     );
   }
   async createPaymentSession(): Promise<any> {
