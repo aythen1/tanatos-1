@@ -9,6 +9,8 @@ export class StripeService {
       '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',
     );
   }
+
+  
   async createPaymentSession(): Promise<any> {
     const paymentIntent = await this.stripe.paymentIntents.create({
       amount: 10000,
