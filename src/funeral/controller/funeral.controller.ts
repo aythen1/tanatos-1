@@ -10,6 +10,8 @@ import {
   UseInterceptors,
   NotFoundException,
   Query,
+  UploadedFile,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { CreateFuneralDto } from '../dto/create-funeral.dto';
 import { UpdateFuneralDto } from '../dto/update-funeral.dto';
@@ -19,7 +21,10 @@ import { Repository } from 'typeorm';
 import { Usuario } from '../../users/entities/user.entity';
 import upload from '../../upload';
 import { diskStorage } from 'multer';
-import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import {
+  FileFieldsInterceptor,
+  FileInterceptor,
+} from '@nestjs/platform-express';
 import { extname } from 'path';
 import { InjectRepository } from '@nestjs/typeorm';
 import Multer from 'multer';
@@ -96,6 +101,99 @@ export class FuneralController {
     }
   }
 
+  @Post('upload-image-funeral/:id')
+  @UseInterceptors(
+    FileInterceptor('image', {
+      storage: diskStorage({
+        destination: './uploads',
+        filename: (req, file, cb) => {
+          const randomName = Array(32)
+            .fill(null)
+            .map(() => Math.round(Math.random() * 16).toString(16))
+            .join('');
+          return cb(null, `${randomName}${extname(file.originalname)}`);
+        },
+      }),
+    }),
+  )
+  async uploadFile(
+    @UploadedFile() file: any,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    console.log(file);
+    const photoUrl = await upload(file.path);
+    console.log(`Actualizando usuario con ID ${id}...`);
+    console.log(photoUrl, 'esta seria la url');
+    const funeral = await this.funeralService.findOne(id);
+    if (!funeral) {
+      throw new NotFoundException(`Usuario con ID ${id} no encontrado`);
+    }
+    funeral.image = photoUrl;
+    unlink(file.path, (err) => {
+      if (err) {
+        console.error('Error al eliminar el archivo:', err);
+      } else {
+        console.log('Archivo eliminado exitosamente');
+      }
+    });
+    return this.funeralService.update(id, funeral);
+  }
+
+  // @Post('upload-image-funeral/:id')
+  // @UseInterceptors(
+  //   FileFieldsInterceptor([{ name: 'image', maxCount: 1 }], {
+  //     storage: diskStorage({
+  //       destination: './uploads',
+  //       filename: (req, file, cb) => {
+  //         const randomName = Array(32)
+  //           .fill(null)
+  //           .map(() => Math.round(Math.random() * 16).toString(16))
+  //           .join('');
+  //         return cb(null, `${randomName}${extname(file.originalname)}`);
+  //       },
+  //     }),
+  //   }),
+  // )
+  // async uploadFile(
+  //   @UploadedFile() file: any,
+  //   @Param('id') id: string,
+  // ): Promise<any> {
+  //   console.log(file, 'files');
+
+  //   // Verificar si 'image' está presente y no es null
+  //   const imageUrl = file.image ? await upload(file.image[0].path) : null;
+
+  //   // Mapear las URL de las imágenes y manejar el caso de 'image' opcional
+  //   const photoUrls = await Promise.all([
+  //     imageUrl, // 'image' puede ser null
+  //   ]);
+
+  //   console.log(photoUrls, 'estas serían las URLs');
+
+  //   const funeral = await this.funeralService.findOne(parseInt(id, 10));
+  //   if (!funeral) {
+  //     throw new NotFoundException(`Funeral con ID ${id} no encontrado`);
+  //   }
+
+  //   // Elimina los archivos de la carpeta uploads
+  //   Object.values(file).forEach((fileArray) => {
+  //     fileArray.forEach((file) => {
+  //       unlink(file.path, (err) => {
+  //         if (err) {
+  //           console.error('Error al eliminar el archivo:', err);
+  //         } else {
+  //           console.log('Archivo eliminado exitosamente');
+  //         }
+  //       });
+  //     });
+  //   });
+
+  //   // Asigna la URL de la imagen al funeral, si existe
+  //   funeral.image = imageUrl;
+
+  //   return this.funeralService.update(parseInt(id, 10), funeral);
+  // }
+
   @Post('upload-images/:id')
   @UseInterceptors(
     FileFieldsInterceptor(
@@ -122,7 +220,7 @@ export class FuneralController {
     @UploadedFiles() files: Record<string, Multer.File[]>,
     @Param('id') id: string,
   ): Promise<any> {
-    console.log(files);
+    console.log(files, 'files');
 
     // Verificar si 'image' está presente y no es null
     const imageUrl = files.image ? await upload(files.image[0].path) : null;
@@ -134,7 +232,6 @@ export class FuneralController {
       files.funeral_image ? upload(files.funeral_image[0].path) : null,
     ]);
 
-    console.log(`Actualizando funeral con ID ${id}...`);
     console.log(photoUrls, 'estas serían las URLs');
 
     const funeral = await this.funeralService.findOne(parseInt(id, 10));
