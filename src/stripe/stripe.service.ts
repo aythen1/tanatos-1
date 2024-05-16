@@ -1,16 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import Stripe from 'stripe';
+import { SECRET_KEY_STRIPE } from 'src/config/data.source';
+
+
 @Injectable()
 export class StripeService {
   private readonly stripe: Stripe;
 
   constructor() {
     this.stripe = new Stripe(
-      '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',
+      SECRET_KEY_STRIPE,
     );
   }
 
-  
+
   async createPaymentSession(): Promise<any> {
     const paymentIntent = await this.stripe.paymentIntents.create({
       amount: 10000,

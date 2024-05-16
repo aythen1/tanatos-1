@@ -15,6 +15,7 @@ export const PAYPAL_API_SECRET = configService.get('PAYPAL_API_SECRET');
 export const PAYPAL_API_CLIENT = configService.get('PAYPAL_API_CLIENT');
 export const PAYPAL_API = configService.get('PAYPAL_API');
 export const appTanatosEmail = configService.get('appTanatosEmail');
+export const SECRET_KEY_STRIPE = configService.get('SECRET_KEY_STRIPE');
 
 export const DataSourceConfig: DataSourceOptions = {
   type: 'postgres',
